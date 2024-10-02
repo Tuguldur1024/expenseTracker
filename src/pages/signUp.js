@@ -8,23 +8,34 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("");
 
   const signUpClick = () => {
-    const information = {
-      name: name,
-      email: email,
-      password: password,
-    };
     if (password !== rePassword) {
-      console.log("Davtsan password buruu baina");
+      setMessage("RePassword is wrong");
+      setMessageColor("#F54949");
+      setRePassword("");
+    } else if (password.length < 8) {
+      setMessage("Password must at least have 8 characters");
+      setMessageColor("#F54949");
+      setRePassword("");
+      setPassword("");
     } else {
+      axios
+        .post("http://localhost:8000/user", {
+          email: email,
+          name: name,
+          password: password,
+          avatar_img: "https://i.pravatar.cc/300",
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
-    axios.post("http://localhost:8000/user", {
-      email: email,
-      name: name,
-      password: password,
-      avatar_img: "https://i.pravatar.cc/300",
-    });
   };
 
   const handleName = (event) => {
@@ -83,6 +94,7 @@ const SignUp = () => {
               className="px-4 py-3 w-full rounded-lg bg-[#F3F4F6] border border-[#D1D5DB]"
               placeholder="Re-password"
             />
+            <p style={{ color: messageColor }}>{message}</p>
             <button
               onClick={() => signUpClick()}
               className="bg-[#0166FF] justify-center font-normal text-xl flex items-center text-white text-center py-2.5 w-full rounded-3xl"

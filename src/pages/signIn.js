@@ -2,11 +2,12 @@ import Logo from "../../public/icons/Logo";
 import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useRouter();
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -16,9 +17,13 @@ const SignIn = () => {
 
   const Login = async () => {
     axios
-      .get("http://localhost:8000/user/signin")
+      .post("http://localhost:8000/user/signIn", {
+        email: email,
+        password: password,
+      })
       .then(function (response) {
-        console.log(response);
+        localStorage.setItem("user", response.data.user[0].id);
+        router.push("/");
       })
       .catch(function (error) {
         console.log(error);

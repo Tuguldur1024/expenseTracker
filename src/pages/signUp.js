@@ -2,6 +2,7 @@ import Link from "next/link";
 import Logo from "../../public/icons/Logo";
 import { useState } from "react";
 import axios from "axios";
+import { Router, useRouter } from "next/router";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -10,7 +11,7 @@ const SignUp = () => {
   const [rePassword, setRePassword] = useState("");
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
-
+  const router = useRouter();
   const signUpClick = () => {
     if (password !== rePassword) {
       setMessage("RePassword is wrong");
@@ -30,7 +31,11 @@ const SignUp = () => {
           avatar_img: "https://i.pravatar.cc/300",
         })
         .then(function (response) {
-          console.log(response);
+          if (response.status == 200) {
+            setMessage("Burtgel amjilttai");
+            setMessageColor("#16A34A");
+            router.push("/signIn");
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -94,7 +99,9 @@ const SignUp = () => {
               className="px-4 py-3 w-full rounded-lg bg-[#F3F4F6] border border-[#D1D5DB]"
               placeholder="Re-password"
             />
-            <p style={{ color: messageColor }}>{message}</p>
+            <p className="text-sm" style={{ color: messageColor }}>
+              {message}
+            </p>
             <button
               onClick={() => signUpClick()}
               className="bg-[#0166FF] justify-center font-normal text-xl flex items-center text-white text-center py-2.5 w-full rounded-3xl"

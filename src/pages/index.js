@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MyCategories from "@/components/Category";
 import PlusSign from "../../public/icons/PlusSign";
 import OneRecord from "../components/OneRecord";
@@ -8,21 +8,11 @@ import { FaAngleRight } from "react-icons/fa6";
 import RentIcon from "../../public/icons/RentIcon";
 import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import AddRecord from "@/components/AddRecord";
+import axios from "axios";
 
-const categories = [
-  "Food & Drinks",
-  "Lending & Renting",
-  "Shopping",
-  "Housing",
-  "Transportation",
-  "Vehicle",
-  "Life & Entertainment",
-  "Communication, PC",
-  "Financial expenses",
-  "Investments",
-  "Income",
-  "Others",
-];
+const colorIncome = "#23E01F";
+const colorExpense = "#F54949";
+
 const records = [
   [
     {
@@ -131,16 +121,42 @@ let checked = [
   "true",
   "true",
 ];
+const userId = localStorage.getItem("userid");
 const Home = () => {
+  const [mycategories, setMyCategories] = useState([]);
+  const [myTransactions, setMyTransactions] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/category")
+      .then(function (response) {
+        setMyCategories(response.data.categories);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    axios
+      .post("http://localhost:8000/transaction/byuserid", { userid: userId })
+      .then(function (response) {
+        setMyTransactions(response.data.transactions);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  console.log(myTransactions);
+
   const [showAdd, setShowAdd] = useState(false);
 
   const [selected, setSelected] = useState("All");
   const [myRecords, setRecords] = useState(records);
 
-  const [selectedCategories, setSelectedCategories] = useState(categories);
+  const [selectedCategories, setSelectedCategories] = useState(mycategories);
   const [selectedEyes, setSelectedEyes] = useState(checked);
 
-  const [checkedCategories, setCheckedCategories] = useState(categories);
+  const [checkedCategories, setCheckedCategories] = useState(mycategories);
   const handleCategory = (input, index) => {
     let myCategories = [...selectedEyes];
     if (input == "true") {
@@ -248,13 +264,13 @@ const Home = () => {
                 <p className="font-normal text-base opacity-20"> Clear </p>
               </div>
               <div className="flex flex-col gap-2">
-                {categories.map((category1, index) => {
+                {mycategories.map((category1, index) => {
                   return (
                     <div
                       key={index}
                       onClick={() => handleCategory(selectedEyes[index], index)}
                     >
-                      <MyCategories categoryName={category1} />
+                      <MyCategories categoryName={category1.name} />
                     </div>
                   );
                 })}

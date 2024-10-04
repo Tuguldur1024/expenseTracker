@@ -2,7 +2,7 @@ import Link from "next/link";
 import Logo from "../../public/icons/Logo";
 import { useState } from "react";
 import axios from "axios";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 const SignUp = () => {
   const [name, setName] = useState("");

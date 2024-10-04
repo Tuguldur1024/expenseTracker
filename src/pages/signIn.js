@@ -22,7 +22,7 @@ const SignIn = () => {
         password: password,
       })
       .then(function (response) {
-        localStorage.setItem("user", response.data.user[0].id);
+        localStorage.setItem("userid", response.data.user[0].id);
         router.push("/");
       })
       .catch(function (error) {

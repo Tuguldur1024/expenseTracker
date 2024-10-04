@@ -1,16 +1,29 @@
 import { IoClose } from "react-icons/io5";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Drink from "../../public/icons/Drink";
 import Gift from "../../public/icons/Gift";
 import Shopping from "../../public/icons/Shopping";
 import Taxi from "../../public/icons/Taxi";
 import RentIcon from "../../public/icons/RentIcon";
 import FoodExpense from "../../public/icons/FoodExpenseIcon";
+import axios from "axios";
+
+let userid = 0;
 
 const AddRecord = (props) => {
-  const { onCloseModal } = props;
+  if (typeof window !== "undefined") {
+    userid = localStorage.getItem("userid");
+  }
+  const { onCloseModal, categories } = props;
   const [incomeExpense, setIncomeExpense] = useState("Expense");
+  const [amount, setAmount] = useState(0);
+  const [description, setDescription] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  const handleSelectChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+  console.log(categories);
   const handleIncomeOrExpense = (props) => {
     const { name } = props;
     setIncomeExpense(name);
@@ -20,24 +33,48 @@ const AddRecord = (props) => {
       setIncomeExpense("Expense");
     }
   };
+  const handleAmount = (e) => {
+    setAmount(e.target.value);
+  };
 
-  const handleAdd = () => {};
+  const handleAdd = async () => {
+    await axios
+      .post("http://localhost:8000/transaction", {
+        user_id: userid,
+        name: "",
+        amount: amount,
+        transaction_type: incomeExpense.substring(0, 3),
+        description: description,
+        category_id: selectedCategory,
+      })
+      .then(function (response) {
+        setAmount(0);
+        setIncomeExpense("Expense");
+        setDescription("");
+        setSelectedCategory("");
+        console.log(response);
+      })
+      .catch(function (error) {
+        setAmount(0);
+        setIncomeExpense("Expense");
+        setDescription("");
+        setSelectedCategory("");
+        console.log(error);
+      });
+  };
 
+  const handleDescription = (event) => {
+    setDescription(event.target.value);
+  };
   const Expensebackground = incomeExpense === "Expense" ? "#0166FF" : "#F3F4F6";
   const Incomebackground = incomeExpense === "Income" ? "#16A34A" : "#F3F4F6";
   const buttonColor = incomeExpense === "Income" ? "#16A34A" : "#0166FF";
-  console.log(buttonColor);
   const textColorIncome =
     incomeExpense === "Income" ? "text-white" : "text-base";
   const textColorExpense =
     incomeExpense === "Expense" ? "text-white" : "text-base";
 
   const today = new Date();
-  const day = String(today.getDate());
-  const year = String(today.getFullYear());
-  const month = "0" + String(today.getMonth());
-  const hour = String(today.getHours());
-  const minutes = String(today.getMinutes());
   return (
     <div className="w-[792px] flex flex-col rounded-xl  border-b border-[#E2E8F0] bg-slate-200">
       <div className="py-5 px-6 flex justify-between">
@@ -66,6 +103,8 @@ const AddRecord = (props) => {
             <div className="flex flex-col py-3 px-4 bg-[#F3F4F6] border border-[#D1D5DB] rounded-xl">
               <p className="font-normal text-base"> Amount </p>
               <input
+                value={amount}
+                onChange={handleAmount}
                 type="number"
                 placeholder="₮ 000.00"
                 className="font-normal text-xl bg-[#F3F4F6]"
@@ -73,29 +112,20 @@ const AddRecord = (props) => {
             </div>
             <div className="flex flex-col gap-2">
               <p> Category </p>
-              <select className="bg-[#F9FAFB] py-3 px-4 text-base font-normal border border-[#D1D5DB] rounded-lg">
+              <select
+                onChange={handleSelectChange}
+                value={selectedCategory}
+                className="bg-[#F9FAFB] py-3 px-4 text-base font-normal border border-[#D1D5DB] rounded-lg"
+              >
                 <option defaultChecked> Find or choose category</option>
-                <option className="px-[18px] py-2 flex gap-3">Food</option>
-                <option> Home </option>
+                {categories.map((category, index) => {
+                  return (
+                    <option value={category.id} key={index}>
+                      {category.name}
+                    </option>
+                  );
+                })}
               </select>
-            </div>
-            <div className="flex gap-2">
-              <div className="flex flex-col gap-2 w-full">
-                <p>Date</p>
-                <input
-                  type="date"
-                  defaultValue={`${year}-${month}-${day}`}
-                  className="py-3 px-4 bg-[#F9FAFB] border border-[#D1D5DB] rounded-lg"
-                />
-              </div>
-              <div className="flex flex-col gap-2 w-full">
-                <p>Time</p>
-                <input
-                  type="time"
-                  defaultValue={`${hour}:${minutes}`}
-                  className="py-3 px-4 bg-[#F9FAFB] border border-[#D1D5DB] rounded-lg"
-                />
-              </div>
             </div>
           </div>
           <button
@@ -109,6 +139,8 @@ const AddRecord = (props) => {
         <div className="flex flex-col gap-2 px-6 pb-6 pt-[18px] w-full ">
           <p className="text-[#1F2937]">Description</p>
           <textarea
+            onChange={handleDescription}
+            value={description}
             placeholder="Write here"
             className="bg-[#F3F4F6] pt-4 pl-4 border border-[#D1D5DB] w-full h-full rounded-lg"
           />
@@ -117,5 +149,4 @@ const AddRecord = (props) => {
     </div>
   );
 };
-
 export default AddRecord;

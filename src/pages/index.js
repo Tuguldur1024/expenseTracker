@@ -23,80 +23,8 @@ const records = [
       money: "+ 1,000₮",
       iconColor: "#0166FF",
     },
-    {
-      color: "#F54949",
-      image: <FoodExpense />,
-      time: "14:00",
-      text: "Food & Drinks",
-      money: "- 1,000₮",
-      iconColor: "#FF4545",
-    },
-    {
-      color: "#F54949",
-      image: <FoodExpense />,
-      time: "14:00",
-      text: "Food & Drinks",
-      money: "- 1,000₮",
-      iconColor: "#FF4545",
-    },
-    {
-      color: "#23E01F",
-      image: <RentIcon />,
-      time: "14:00",
-      text: "Lending & Renting",
-      money: "+ 1,000₮",
-      iconColor: "#0166FF",
-    },
-    {
-      color: "#23E01F",
-      image: <RentIcon />,
-      time: "14:00",
-      text: "Lending & Renting",
-      money: "+ 1,000₮",
-      iconColor: "#0166FF",
-    },
   ],
   [
-    {
-      color: "#23E01F",
-      image: <RentIcon />,
-      time: "14:00",
-      text: "Lending & Renting",
-      money: "+ 1,000₮",
-      iconColor: "#0166FF",
-    },
-    {
-      color: "#F54949",
-      image: <FoodExpense />,
-      time: "14:00",
-      text: "Food & Drinks",
-      money: "- 1,000₮",
-      iconColor: "#FF4545",
-    },
-    {
-      color: "#F54949",
-      image: <FoodExpense />,
-      time: "14:00",
-      text: "Food & Drinks",
-      money: "- 1,000₮",
-      iconColor: "#FF4545",
-    },
-    {
-      color: "#23E01F",
-      image: <RentIcon />,
-      time: "14:00",
-      text: "Lending & Renting",
-      money: "+ 1,000₮",
-      iconColor: "#0166FF",
-    },
-    {
-      color: "#F54949",
-      image: <FoodExpense />,
-      time: "14:00",
-      text: "Food & Drinks",
-      money: "- 1,000₮",
-      iconColor: "#FF4545",
-    },
     {
       color: "#F54949",
       image: <FoodExpense />,
@@ -121,11 +49,14 @@ let checked = [
   "true",
   "true",
 ];
-const userId = localStorage.getItem("userid");
+let userId = 0;
 const Home = () => {
   const [mycategories, setMyCategories] = useState([]);
   const [myTransactions, setMyTransactions] = useState([]);
-
+  if (typeof window !== "undefined") {
+    userId = localStorage.getItem("userid");
+  }
+  console.log(userId);
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
@@ -137,7 +68,7 @@ const Home = () => {
       });
 
     axios
-      .post("http://localhost:8000/transaction/byuserid", { userid: userId })
+      .post("http://localhost:8000/transaction/byuserid", { user_id: userId })
       .then(function (response) {
         setMyTransactions(response.data.transactions);
       })
@@ -145,7 +76,7 @@ const Home = () => {
         console.log(error);
       });
   }, []);
-
+  console.log(mycategories);
   console.log(myTransactions);
 
   const [showAdd, setShowAdd] = useState(false);
@@ -202,10 +133,12 @@ const Home = () => {
     <div>
       {showAdd && (
         <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
-          <AddRecord onCloseModal={handleAdd} />
+          <AddRecord onCloseModal={handleAdd} categories={mycategories} />
         </div>
       )}
-      <div className={`bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}>
+      <div
+        className={` min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
+      >
         <Navbar />
 
         <div className="flex gap-6">

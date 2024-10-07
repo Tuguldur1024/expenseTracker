@@ -9,9 +9,9 @@ import RentIcon from "../../public/icons/RentIcon";
 import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import AddRecord from "@/components/AddRecord";
 import axios from "axios";
+import moment from "moment";
 
-const colorIncome = "#23E01F";
-const colorExpense = "#F54949";
+import AddCategory from "@/components/AddCategory";
 
 const records = [
   [
@@ -35,6 +35,8 @@ const records = [
     },
   ],
 ];
+const today = new Date();
+
 let checked = [
   "true",
   "true",
@@ -50,13 +52,28 @@ let checked = [
   "true",
 ];
 let userId = 0;
+
+const categoryIconMap = {
+  food: <FoodExpense />,
+};
 const Home = () => {
+  let transaction_color = "#F54949";
+  let icon = <FoodExpense />;
+  let plusMinusSign = "+";
+
   const [mycategories, setMyCategories] = useState([]);
   const [myTransactions, setMyTransactions] = useState([]);
+  const transactionsOfToday = myTransactions.filter(
+    (trans) =>
+      moment(trans.created_at).format("ll") === moment(today).format("ll")
+  );
+  const transactionOfBefore = myTransactions.filter(
+    (trans) =>
+      moment(trans.created_at).format("ll") !== moment(today).format("ll")
+  );
   if (typeof window !== "undefined") {
     userId = localStorage.getItem("userid");
   }
-  console.log(userId);
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
@@ -76,17 +93,12 @@ const Home = () => {
         console.log(error);
       });
   }, []);
-  console.log(mycategories);
-  console.log(myTransactions);
-
+  const [showAddCategory, setShowAddCategory] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-
   const [selected, setSelected] = useState("All");
   const [myRecords, setRecords] = useState(records);
-
   const [selectedCategories, setSelectedCategories] = useState(mycategories);
   const [selectedEyes, setSelectedEyes] = useState(checked);
-
   const [checkedCategories, setCheckedCategories] = useState(mycategories);
   const handleCategory = (input, index) => {
     let myCategories = [...selectedEyes];
@@ -96,13 +108,6 @@ const Home = () => {
       myCategories[index] = "true";
     }
     setSelectedEyes(myCategories);
-    let filteredCategories = [];
-    for (let i = 0; i < categories.length; i++) {
-      if (selectedEyes[i] == "true") {
-        filteredCategories.push(selectedCategories[i]);
-      }
-    }
-    setCheckedCategories();
   };
   const handleExpense = () => {
     const filtered = records.map((day) =>
@@ -127,10 +132,18 @@ const Home = () => {
   const handleAdd = () => {
     setShowAdd(!showAdd);
   };
+  const addCategory = () => {
+    setShowAddCategory(!showAddCategory);
+  };
   // const opacity = showAdd === false ? "opacity-100" : "opacity-100";
   return (
     // <div className="flex justify-center items-center flex-col">
     <div>
+      {showAddCategory && (
+        <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
+          <AddCategory onCloseModal={addCategory} categories={mycategories} />
+        </div>
+      )}
       {showAdd && (
         <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
           <AddRecord onCloseModal={handleAdd} categories={mycategories} />
@@ -139,7 +152,10 @@ const Home = () => {
       <div
         className={` min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
       >
-        <Navbar />
+        <Navbar
+          dashboardStyle={"text-[#0F172A]"}
+          recordsStyle={"font-semibold text-base text-[#0F172A]"}
+        />
 
         <div className="flex gap-6">
           <div className="bg-white flex flex-col px-6 py-4 w-[282px] gap-6 rounded-xl h-fit border border-[#E5E7EB]">
@@ -208,7 +224,10 @@ const Home = () => {
                   );
                 })}
               </div>
-              <div className="flex gap-2 py-1.5 pl-3 items-center">
+              <div
+                onClick={addCategory}
+                className="flex gap-2 py-1.5 pl-3 items-center"
+              >
                 <PlusSign color={"#0166FF"} />
                 <p>Add category </p>
               </div>
@@ -233,32 +252,50 @@ const Home = () => {
             <div className="flex flex-col gap-3">
               <p className="font-semibold text-base"> Today </p>
               <div className="flex flex-col gap-3 mb-3">
-                {myRecords[0].map((recordToday, index) => {
+                {transactionsOfToday.map((recordToday, index) => {
+                  if (recordToday.transaction_type === "INC") {
+                    transaction_color = "#23E01F";
+                    icon = <RentIcon />;
+                    plusMinusSign = "+";
+                  } else {
+                    transaction_color = "#F54949";
+                    icon = <FoodExpense />;
+                    plusMinusSign = "-";
+                  }
                   return (
                     <OneRecord
                       key={index}
-                      text={recordToday.text}
-                      image={recordToday.image}
-                      time={recordToday.time}
-                      color={recordToday.color}
-                      money={recordToday.money}
-                      iconColor={recordToday.iconColor}
+                      text={recordToday.name}
+                      image={icon}
+                      time={moment(recordToday.created_at).format("LT")}
+                      color={transaction_color}
+                      money={plusMinusSign + " " + String(recordToday.amount)}
+                      iconColor={transaction_color}
                     />
                   );
                 })}
               </div>
               <p className="font-semibold text-base"> Yesterday </p>
               <div className="flex flex-col gap-3">
-                {myRecords[1].map((recordToday, index) => {
+                {transactionOfBefore.map((recordToday, index) => {
+                  if (recordToday.transaction_type === "INC") {
+                    transaction_color = "#23E01F";
+                    icon = <RentIcon />;
+                    plusMinusSign = "+";
+                  } else {
+                    transaction_color = "#F54949";
+                    icon = <FoodExpense />;
+                    plusMinusSign = "-";
+                  }
                   return (
                     <OneRecord
                       key={index}
-                      text={recordToday.text}
-                      image={recordToday.image}
-                      time={recordToday.time}
-                      color={recordToday.color}
-                      money={recordToday.money}
-                      iconColor={recordToday.iconColor}
+                      text={recordToday.name}
+                      image={icon}
+                      time={moment(recordToday.created_at).format("L")}
+                      color={transaction_color}
+                      money={plusMinusSign + " " + String(recordToday.amount)}
+                      iconColor={transaction_color}
                     />
                   );
                 })}

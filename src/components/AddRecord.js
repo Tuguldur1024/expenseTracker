@@ -28,9 +28,9 @@ const AddRecord = (props) => {
     const { name } = props;
     setIncomeExpense(name);
     if (incomeExpense === "Expense") {
-      setIncomeExpense("Income");
+      setIncomeExpense("INCOME");
     } else {
-      setIncomeExpense("Expense");
+      setIncomeExpense("EXPENSE");
     }
   };
   const handleAmount = (e) => {
@@ -49,14 +49,14 @@ const AddRecord = (props) => {
       })
       .then(function (response) {
         setAmount(0);
-        setIncomeExpense("Expense");
+        setIncomeExpense("EXPENSE");
         setDescription("");
         setSelectedCategory("");
         console.log(response);
       })
       .catch(function (error) {
         setAmount(0);
-        setIncomeExpense("Expense");
+        setIncomeExpense("EXPENSE");
         setDescription("");
         setSelectedCategory("");
         console.log(error);

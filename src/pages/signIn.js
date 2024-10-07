@@ -16,14 +16,14 @@ const SignIn = () => {
   };
 
   const Login = async () => {
-    axios
+    await axios
       .post("http://localhost:8000/user/signIn", {
         email: email,
         password: password,
       })
       .then(function (response) {
         localStorage.setItem("userid", response.data.user[0].id);
-        router.push("/");
+        router.push("/dashboard");
       })
       .catch(function (error) {
         console.log(error);

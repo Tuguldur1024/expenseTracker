@@ -1,13 +1,28 @@
+import { useState } from "react";
 import Logo from "../../public/icons/Logo";
+import { useRouter } from "next/router";
 
 const Navbar = (props) => {
-  const { onClick } = props;
+  const router = useRouter();
+  const { onClick, dashboardStyle, recordsStyle } = props;
+
+  const goDashboard = () => {
+    router.push("/dashboard");
+  };
+  const goRecords = () => {
+    router.push("/");
+  };
+
   return (
     <div className="bg-white w-full px-[120px] py-4 flex justify-between max-w-screen-xl">
       <div className="flex gap-6 items-center">
         <Logo />
-        <p> Dashboard </p>
-        <p> Records</p>
+        <p onClick={goDashboard} className={`${dashboardStyle}`}>
+          Dashboard
+        </p>
+        <p onClick={goRecords} className={`${recordsStyle}`}>
+          Records
+        </p>
       </div>
       <div className="flex items-center gap-6">
         <button

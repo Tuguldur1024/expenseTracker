@@ -63,17 +63,15 @@ const Home = () => {
 
   const [mycategories, setMyCategories] = useState([]);
   const [myTransactions, setMyTransactions] = useState([]);
-  const transactionsOfToday = myTransactions.filter(
-    (trans) =>
-      moment(trans.created_at).format("ll") === moment(today).format("ll")
-  );
-  const transactionOfBefore = myTransactions.filter(
-    (trans) =>
-      moment(trans.created_at).format("ll") !== moment(today).format("ll")
-  );
-  if (typeof window !== "undefined") {
-    userId = localStorage.getItem("userid");
-  }
+  const [filterTransactions, setFilterTransactions] = useState("All");
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [selected, setSelected] = useState("All");
+  const [myRecords, setRecords] = useState(records);
+  const [selectedCategories, setSelectedCategories] = useState(mycategories);
+  const [selectedEyes, setSelectedEyes] = useState(checked);
+  const [checkedCategories, setCheckedCategories] = useState(mycategories);
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
@@ -85,21 +83,29 @@ const Home = () => {
       });
 
     axios
-      .post("http://localhost:8000/transaction/byuserid", { user_id: userId })
+      .post("http://localhost:8000/transaction/byuserid", {
+        user_id: userId,
+        filter: filterTransactions,
+      })
       .then(function (response) {
         setMyTransactions(response.data.transactions);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
-  const [showAddCategory, setShowAddCategory] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
-  const [selected, setSelected] = useState("All");
-  const [myRecords, setRecords] = useState(records);
-  const [selectedCategories, setSelectedCategories] = useState(mycategories);
-  const [selectedEyes, setSelectedEyes] = useState(checked);
-  const [checkedCategories, setCheckedCategories] = useState(mycategories);
+  }, [filterTransactions]);
+  const transactionsOfToday = myTransactions.filter(
+    (trans) =>
+      moment(trans.created_at).format("ll") === moment(today).format("ll")
+  );
+  const transactionOfBefore = myTransactions.filter(
+    (trans) =>
+      moment(trans.created_at).format("ll") !== moment(today).format("ll")
+  );
+  if (typeof window !== "undefined") {
+    userId = localStorage.getItem("userid");
+  }
+
   const handleCategory = (input, index) => {
     let myCategories = [...selectedEyes];
     if (input == "true") {
@@ -109,21 +115,15 @@ const Home = () => {
     }
     setSelectedEyes(myCategories);
   };
+
   const handleExpense = () => {
-    const filtered = records.map((day) =>
-      day.filter((oneRecord) => oneRecord.money.includes("-"))
-    );
-    setRecords(filtered);
+    setFilterTransactions("Expense");
   };
   const handleIncome = () => {
-    const filtered = records.map((day) =>
-      day.filter((oneRecord) => oneRecord.money.includes("+"))
-    );
-    console.log(filtered);
-    setRecords(filtered);
+    setFilterTransactions("Income");
   };
   const handleAll = () => {
-    setRecords(records);
+    setFilterTransactions("All");
   };
   const handleChange = (option) => {
     setSelected(option);
@@ -135,9 +135,7 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-  // const opacity = showAdd === false ? "opacity-100" : "opacity-100";
   return (
-    // <div className="flex justify-center items-center flex-col">
     <div>
       {showAddCategory && (
         <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">

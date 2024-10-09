@@ -37,20 +37,6 @@ const records = [
 ];
 const today = new Date();
 
-let checked = [
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-  "true",
-];
 let userId = 0;
 
 const categoryIconMap = {
@@ -68,9 +54,9 @@ const Home = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState("All");
   const [myRecords, setRecords] = useState(records);
-  const [selectedEyes, setSelectedEyes] = useState(checked);
 
   const [filteredCategories, setFilteredCategories] = useState([]);
+  const [unCheckedCategories, setUnCheckedCategories] = useState([]);
 
   useEffect(() => {
     axios
@@ -96,7 +82,6 @@ const Home = () => {
       });
   }, [filterTransactions]);
 
-  useEffect(() => {}, []);
   const transactionsOfToday = myTransactions.filter(
     (trans) =>
       moment(trans.created_at).format("ll") === moment(today).format("ll")
@@ -108,17 +93,40 @@ const Home = () => {
   if (typeof window !== "undefined") {
     userId = localStorage.getItem("userid");
   }
-  const handleCategory = (input, index) => {
-    let myCategories = [...selectedEyes];
-    let filteredCates = [...filteredCategories];
-    if (input == "true") {
-      filteredCates[index] = "";
-      myCategories[index] = "false";
-    } else {
-      myCategories[index] = "true";
-    }
-    setSelectedEyes(myCategories);
+  const handleCategory = (id) => {
+    // unCheckedCategories.map((oneCategory) => {
+    //   if (oneCategory.id == id) {
+    //   }
+    // });
+    axios
+      .post("http://localhost:8000/transaction/filterCategories", {
+        categories: [{ name: "Lending & Renting" }],
+        userid: userId,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    // let myCategories = [...selectedEyes];
+    // let filteredCates = [];
+    // if (input == "true") {
+    //   myCategories[index] = "false";
+    // } else {
+    //   myCategories[index] = "true";
+    // }
+    // for (let i = 0; i < myCategories.length; i++) {
+    //   if (myCategories[i] === "true") {
+    //     filteredCates.push(mycategories[i]);
+    //   }
+    // }
+    // mycategories.filter(()=>)
+    // setFilteredCategories(filteredCates);
+    // setSelectedEyes(myCategories);
   };
+  console.log(filteredCategories);
+  console.log(unCheckedCategories);
 
   const handleExpense = () => {
     setFilterTransactions("Expense");
@@ -139,7 +147,6 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-
   console.log(mycategories);
   return (
     <div>
@@ -221,7 +228,7 @@ const Home = () => {
                   return (
                     <div
                       key={index}
-                      onClick={() => handleCategory(selectedEyes[index], index)}
+                      onClick={() => handleCategory(category1.id)}
                     >
                       <MyCategories categoryName={category1.name} />
                     </div>

@@ -3,7 +3,7 @@ import ClosedEyeIcon from "../../public/icons/ClosedEyeIcon";
 import { useState } from "react";
 
 const MyCategories = (props) => {
-  const { categoryName, ischecked } = props;
+  const { categoryName } = props;
   const [checked, setChecked] = useState("true");
   const handleClick = () => {
     if (checked === "true") {

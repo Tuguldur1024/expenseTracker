@@ -68,15 +68,16 @@ const Home = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState("All");
   const [myRecords, setRecords] = useState(records);
-  const [selectedCategories, setSelectedCategories] = useState(mycategories);
   const [selectedEyes, setSelectedEyes] = useState(checked);
-  const [checkedCategories, setCheckedCategories] = useState(mycategories);
+
+  const [filteredCategories, setFilteredCategories] = useState([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
       .then(function (response) {
         setMyCategories(response.data.categories);
+        setFilteredCategories(response.data.categories);
       })
       .catch(function (error) {
         console.log(error);
@@ -94,6 +95,8 @@ const Home = () => {
         console.log(error);
       });
   }, [filterTransactions]);
+
+  useEffect(() => {}, []);
   const transactionsOfToday = myTransactions.filter(
     (trans) =>
       moment(trans.created_at).format("ll") === moment(today).format("ll")
@@ -105,10 +108,11 @@ const Home = () => {
   if (typeof window !== "undefined") {
     userId = localStorage.getItem("userid");
   }
-
   const handleCategory = (input, index) => {
     let myCategories = [...selectedEyes];
+    let filteredCates = [...filteredCategories];
     if (input == "true") {
+      filteredCates[index] = "";
       myCategories[index] = "false";
     } else {
       myCategories[index] = "true";
@@ -135,6 +139,8 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
+
+  console.log(mycategories);
   return (
     <div>
       {showAddCategory && (

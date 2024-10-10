@@ -5,6 +5,7 @@ import PlusSign from "../../public/icons/PlusSign";
 import OneRecord from "../components/OneRecord";
 import { FaChevronLeft, FaSearchengin } from "react-icons/fa6";
 import { FaAngleRight } from "react-icons/fa6";
+import LatestFirst from "@/components/LatestFirst";
 import RentIcon from "../../public/icons/RentIcon";
 import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import AddRecord from "@/components/AddRecord";
@@ -43,6 +44,9 @@ const categoryIconMap = {
   food: <FoodExpense />,
 };
 const Home = () => {
+  if (typeof window !== "undefined") {
+    userId = localStorage.getItem("userid");
+  }
   let transaction_color = "#F54949";
   let icon = <FoodExpense />;
   let plusMinusSign = "+";
@@ -58,6 +62,21 @@ const Home = () => {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [unCheckedCategories, setUnCheckedCategories] = useState([]);
 
+  const [condition, setCondition] = useState("DESC");
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (event) => {
+    const searchValue = event.target.value;
+    setSearch(event.target.value);
+  };
+
+  const lastestNewest = () => {
+    if (condition === "DESC") {
+      setCondition("ASC");
+    } else {
+      setCondition("DESC");
+    }
+  };
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
@@ -90,9 +109,7 @@ const Home = () => {
     (trans) =>
       moment(trans.created_at).format("ll") !== moment(today).format("ll")
   );
-  if (typeof window !== "undefined") {
-    userId = localStorage.getItem("userid");
-  }
+
   const handleCategory = (id) => {
     axios
       .post("http://localhost:8000/transaction/filterCategories", {
@@ -121,8 +138,6 @@ const Home = () => {
     // setFilteredCategories(filteredCates);
     // setSelectedEyes(myCategories);
   };
-  console.log(filteredCategories);
-  console.log(unCheckedCategories);
 
   const handleExpense = () => {
     setFilterTransactions("Expense");
@@ -143,7 +158,7 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-  console.log(mycategories);
+  console.log(search);
   return (
     <div>
       {showAddCategory && (
@@ -176,6 +191,8 @@ const Home = () => {
               </button>
             </div>
             <input
+              value={search}
+              onChange={handleSearch}
               placeholder="Search"
               className="border border-[#D1D5DB] rounded-lg px-4 py-1"
             />
@@ -251,63 +268,75 @@ const Home = () => {
                   <FaAngleRight />
                 </div>
               </div>
-              <select className="w-[180px] py-3 px-4 rounded-lg font-semibold text-base text-[#1F2937] border border-[#D1D5DB]">
+              <select
+                onChange={lastestNewest}
+                className="w-[180px] py-3 px-4 rounded-lg font-semibold text-base text-[#1F2937] border border-[#D1D5DB]"
+              >
                 <option selected>Newest First</option>
                 <option> Latest First </option>
               </select>
             </div>
-            <div className="flex flex-col gap-3">
-              <p className="font-semibold text-base"> Today </p>
-              <div className="flex flex-col gap-3 mb-3">
-                {transactionsOfToday.map((recordToday, index) => {
-                  if (recordToday.transaction_type === "INC") {
-                    transaction_color = "#23E01F";
-                    icon = <RentIcon />;
-                    plusMinusSign = "+";
-                  } else {
-                    transaction_color = "#F54949";
-                    icon = <FoodExpense />;
-                    plusMinusSign = "-";
-                  }
-                  return (
-                    <OneRecord
-                      key={index}
-                      text={recordToday.name}
-                      image={icon}
-                      time={moment(recordToday.created_at).format("LT")}
-                      color={transaction_color}
-                      money={plusMinusSign + " " + String(recordToday.amount)}
-                      iconColor={transaction_color}
-                    />
-                  );
-                })}
-              </div>
-              <p className="font-semibold text-base"> Yesterday </p>
+            {condition === "ASC" && (
+              <LatestFirst
+                filter={filterTransactions}
+                userid={userId}
+                search={search}
+              />
+            )}
+            {condition === "DESC" && (
               <div className="flex flex-col gap-3">
-                {transactionOfBefore.map((recordToday, index) => {
-                  if (recordToday.transaction_type === "INC") {
-                    transaction_color = "#23E01F";
-                    icon = <RentIcon />;
-                    plusMinusSign = "+";
-                  } else {
-                    transaction_color = "#F54949";
-                    icon = <FoodExpense />;
-                    plusMinusSign = "-";
-                  }
-                  return (
-                    <OneRecord
-                      key={index}
-                      text={recordToday.name}
-                      image={icon}
-                      time={moment(recordToday.created_at).format("L")}
-                      color={transaction_color}
-                      money={plusMinusSign + " " + String(recordToday.amount)}
-                      iconColor={transaction_color}
-                    />
-                  );
-                })}
+                <p className="font-semibold text-base"> Today </p>
+                <div className="flex flex-col gap-3 mb-3">
+                  {transactionsOfToday.map((recordToday, index) => {
+                    if (recordToday.transaction_type === "INC") {
+                      transaction_color = "#23E01F";
+                      icon = <RentIcon />;
+                      plusMinusSign = "+";
+                    } else {
+                      transaction_color = "#F54949";
+                      icon = <FoodExpense />;
+                      plusMinusSign = "-";
+                    }
+                    return (
+                      <OneRecord
+                        key={index}
+                        text={recordToday.name}
+                        image={icon}
+                        time={moment(recordToday.created_at).format("LT")}
+                        color={transaction_color}
+                        money={plusMinusSign + " " + String(recordToday.amount)}
+                        iconColor={transaction_color}
+                      />
+                    );
+                  })}
+                </div>
+                <p className="font-semibold text-base"> Yesterday </p>
+                <div className="flex flex-col gap-3">
+                  {transactionOfBefore.map((recordToday, index) => {
+                    if (recordToday.transaction_type === "INC") {
+                      transaction_color = "#23E01F";
+                      icon = <RentIcon />;
+                      plusMinusSign = "+";
+                    } else {
+                      transaction_color = "#F54949";
+                      icon = <FoodExpense />;
+                      plusMinusSign = "-";
+                    }
+                    return (
+                      <OneRecord
+                        key={index}
+                        text={recordToday.name}
+                        image={icon}
+                        time={moment(recordToday.created_at).format("L")}
+                        color={transaction_color}
+                        money={plusMinusSign + " " + String(recordToday.amount)}
+                        iconColor={transaction_color}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

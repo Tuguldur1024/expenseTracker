@@ -94,10 +94,6 @@ const Home = () => {
     userId = localStorage.getItem("userid");
   }
   const handleCategory = (id) => {
-    // unCheckedCategories.map((oneCategory) => {
-    //   if (oneCategory.id == id) {
-    //   }
-    // });
     axios
       .post("http://localhost:8000/transaction/filterCategories", {
         categories: [{ name: "Lending & Renting" }],

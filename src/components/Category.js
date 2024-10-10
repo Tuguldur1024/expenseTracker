@@ -3,7 +3,7 @@ import ClosedEyeIcon from "../../public/icons/ClosedEyeIcon";
 import { useState } from "react";
 
 const MyCategories = (props) => {
-  const { categoryName } = props;
+  const { categoryName, clickOnCategory } = props;
   const [checked, setChecked] = useState("true");
   const handleClick = () => {
     if (checked === "true") {
@@ -13,6 +13,7 @@ const MyCategories = (props) => {
     }
   };
   const icon = checked === "true" ? <EyeIcon /> : <ClosedEyeIcon />;
+
   return (
     <div
       onClick={() => handleClick()}

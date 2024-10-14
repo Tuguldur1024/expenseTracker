@@ -158,7 +158,7 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-  console.log(search);
+  // console.log(search);
   return (
     <div>
       {showAddCategory && (

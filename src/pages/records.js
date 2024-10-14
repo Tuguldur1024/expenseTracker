@@ -184,7 +184,10 @@ const Records = () => {
     setShowAdd(!showAdd);
   };
   const addRecord = () => {
-    axios.get("http://localhost:8000/transaction", {});
+    axios.get(
+      "https://firstbackendexpensetracker.onrender.com/transaction",
+      {}
+    );
   };
   // const opacity = showAdd === false ? "opacity-100" : "opacity-100";
   return (

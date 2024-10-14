@@ -51,7 +51,7 @@ const AddRecord = (props) => {
       setAmountBorder("#D1D5DB");
     } else {
       await axios
-        .post("http://localhost:8000/transaction", {
+        .post("https://firstbackendexpensetracker.onrender.com/transaction", {
           user_id: userid,
           name: "",
           amount: amount,

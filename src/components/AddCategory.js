@@ -25,7 +25,7 @@ const AddCategory = (props) => {
       setDescription("");
     } else {
       await axios
-        .post("http://localhost:8000/category", {
+        .post("https://firstbackendexpensetracker.onrender.com/category", {
           name: name,
           description: description,
         })

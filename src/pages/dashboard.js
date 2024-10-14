@@ -25,7 +25,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:8000/transaction/byuserid", { user_id: userid })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
+        { user_id: userid }
+      )
       .then(function (response) {
         const lastRecords = response.data.transactions.slice(0, 5);
         setTransactions(lastRecords);
@@ -34,9 +37,12 @@ const Dashboard = () => {
         console.log(error);
       });
     axios
-      .post("http://localhost:8000/transaction/getIncome", {
-        userid: userid,
-      })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/getIncome",
+        {
+          userid: userid,
+        }
+      )
       .then(function (response) {
         setIncome(response.data.totalIncome[0].sum);
       })
@@ -44,9 +50,12 @@ const Dashboard = () => {
         console.log(error);
       });
     axios
-      .post("http://localhost:8000/transaction/getExpense", {
-        userid: userid,
-      })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/getExpense",
+        {
+          userid: userid,
+        }
+      )
       .then(function (response) {
         setExpense(response.data.expense[0].sum);
       })

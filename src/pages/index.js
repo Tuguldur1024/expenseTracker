@@ -95,7 +95,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/category")
+      .get("https://firstbackendexpensetracker.onrender.com/category")
       .then(function (response) {
         setFilteredCategories(response.data.categories);
       })
@@ -106,7 +106,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/category")
+      .get("https://firstbackendexpensetracker.onrender.com/category")
       .then(function (response) {
         setMyCategories(response.data.categories);
       })
@@ -115,13 +115,17 @@ const Home = () => {
       });
 
     axios
-      .post("http://localhost:8000/transaction/byuserid", {
-        user_id: userId,
-        filter: filterTransactions,
-        search: search,
-        categories: filteredCategories,
-      })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
+        {
+          user_id: userId,
+          filter: filterTransactions,
+          search: search,
+          categories: filteredCategories,
+        }
+      )
       .then(function (response) {
+        console.log(response);
         setMyTransactions(response.data.transactions);
       })
       .catch(function (error) {

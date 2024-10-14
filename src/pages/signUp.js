@@ -24,7 +24,7 @@ const SignUp = () => {
       setPassword("");
     } else {
       axios
-        .post("http://localhost:8000/user", {
+        .post("https://firstbackendexpensetracker.onrender.com/user", {
           email: email,
           name: name,
           password: password,

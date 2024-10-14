@@ -9,12 +9,15 @@ const LatestFirst = ({ userid, filter, search, categories }) => {
   const [ascendingTransactions, setAscendingTransactions] = useState([]);
   useEffect(() => {
     axios
-      .post("http://localhost:8000/transaction/getAscendingTransactions", {
-        user_id: userid,
-        filter: filter,
-        search: search,
-        categories: categories,
-      })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/getAscendingTransactions",
+        {
+          user_id: userid,
+          filter: filter,
+          search: search,
+          categories: categories,
+        }
+      )
       .then(function (response) {
         console.log(response);
         setAscendingTransactions(response.data.transactions);

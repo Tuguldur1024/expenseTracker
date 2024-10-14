@@ -25,7 +25,7 @@ const LatestFirst = ({ userid, filter, search, categories }) => {
       .catch(function (error) {
         console.log(error);
       });
-  }, [search, filter]);
+  }, [search, filter, categories, userid]);
 
   let transaction_color = "";
   let icon = null;

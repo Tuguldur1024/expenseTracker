@@ -11,6 +11,7 @@ import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import AddRecord from "@/components/AddRecord";
 import axios from "axios";
 import moment from "moment";
+import Router, { useRouter } from "next/router";
 
 import AddCategory from "@/components/AddCategory";
 
@@ -39,10 +40,14 @@ const records = [
 const today = new Date();
 
 const Home = () => {
+  const router = useRouter();
   const [userId, setUserId] = useState(0);
   useEffect(() => {
     const savedId = window.localStorage.getItem("userid");
-    setUserId(savedId ? savedId : 0);
+    if (!savedId) {
+      router.push("/signIn");
+    }
+    setUserId(savedId);
   }, []);
   let transaction_color = "#F54949";
   let icon = <FoodExpense />;
@@ -84,8 +89,6 @@ const Home = () => {
 
     setSearch(event.target.value);
   };
-
-  console.log(search);
 
   const lastestNewest = () => {
     if (condition === "DESC") {
@@ -190,7 +193,7 @@ const Home = () => {
         </div>
       )}
       <div
-        className={` min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
+        className={` min-h-screen min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
       >
         <Navbar
           onCloseModal={handleAdd}

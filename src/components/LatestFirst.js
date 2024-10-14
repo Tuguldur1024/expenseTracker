@@ -5,23 +5,24 @@ import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import RentIcon from "../../public/icons/RentIcon";
 import moment from "moment";
 
-const LatestFirst = ({ userid, filter, search }) => {
+const LatestFirst = ({ userid, filter, search, categories }) => {
   const [ascendingTransactions, setAscendingTransactions] = useState([]);
-  console.log(search);
   useEffect(() => {
     axios
       .post("http://localhost:8000/transaction/getAscendingTransactions", {
         user_id: userid,
         filter: filter,
         search: search,
+        categories: categories,
       })
       .then(function (response) {
+        console.log(response);
         setAscendingTransactions(response.data.transactions);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, [filter]);
+  }, [search, filter]);
 
   let transaction_color = "";
   let icon = null;

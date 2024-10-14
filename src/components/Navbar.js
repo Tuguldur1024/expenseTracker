@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 const Navbar = (props) => {
   const router = useRouter();
-  const { onClick, dashboardStyle, recordsStyle } = props;
+  const { onCloseModal, dashboardStyle, recordsStyle } = props;
 
   const goDashboard = () => {
     router.push("/dashboard");
@@ -16,7 +16,7 @@ const Navbar = (props) => {
   return (
     <div className="bg-white w-full px-[120px] py-4 flex justify-between max-w-screen-xl">
       <div className="flex gap-6 items-center">
-        <Logo />
+        <Logo onClick={goDashboard} />
         <p onClick={goDashboard} className={`${dashboardStyle}`}>
           Dashboard
         </p>
@@ -26,7 +26,7 @@ const Navbar = (props) => {
       </div>
       <div className="flex items-center gap-6">
         <button
-          onClick={onClick}
+          onClick={onCloseModal}
           className="bg-[#0166FF] py-1.5 px-3 text-white rounded-3xl text-base"
         >
           + Record

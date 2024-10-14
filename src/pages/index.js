@@ -60,13 +60,28 @@ const Home = () => {
   const [myRecords, setRecords] = useState(records);
 
   const [filteredCategories, setFilteredCategories] = useState([]);
-  const [unCheckedCategories, setUnCheckedCategories] = useState([]);
 
   const [condition, setCondition] = useState("DESC");
   const [search, setSearch] = useState("");
 
   const handleSearch = (event) => {
     const searchValue = event.target.value;
+    setSearch(searchValue);
+
+    axios
+      .post("http://localhost:8000/transaction/byuserid", {
+        user_id: userId,
+        filter: filterTransactions,
+        search: searchValue,
+        categories: filteredCategories,
+      })
+      .then(function (response) {
+        setMyTransactions(response.data.transactions);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
     setSearch(event.target.value);
   };
 
@@ -77,12 +92,23 @@ const Home = () => {
       setCondition("DESC");
     }
   };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/category")
+      .then(function (response) {
+        setFilteredCategories(response.data.categories);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/category")
       .then(function (response) {
         setMyCategories(response.data.categories);
-        setFilteredCategories(response.data.categories);
       })
       .catch(function (error) {
         console.log(error);
@@ -92,6 +118,8 @@ const Home = () => {
       .post("http://localhost:8000/transaction/byuserid", {
         user_id: userId,
         filter: filterTransactions,
+        search: search,
+        categories: filteredCategories,
       })
       .then(function (response) {
         setMyTransactions(response.data.transactions);
@@ -99,7 +127,7 @@ const Home = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }, [filterTransactions]);
+  }, [filterTransactions, filteredCategories.length]);
 
   const transactionsOfToday = myTransactions.filter(
     (trans) =>
@@ -110,33 +138,17 @@ const Home = () => {
       moment(trans.created_at).format("ll") !== moment(today).format("ll")
   );
 
-  const handleCategory = (id) => {
-    axios
-      .post("http://localhost:8000/transaction/filterCategories", {
-        categories: [{ name: "Lending & Renting" }],
-        userid: userId,
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    // let myCategories = [...selectedEyes];
-    // let filteredCates = [];
-    // if (input == "true") {
-    //   myCategories[index] = "false";
-    // } else {
-    //   myCategories[index] = "true";
-    // }
-    // for (let i = 0; i < myCategories.length; i++) {
-    //   if (myCategories[i] === "true") {
-    //     filteredCates.push(mycategories[i]);
-    //   }
-    // }
-    // mycategories.filter(()=>)
-    // setFilteredCategories(filteredCates);
-    // setSelectedEyes(myCategories);
+  const handleCategory = (category) => {
+    const bool = filteredCategories.filter(
+      (oneTrans) => oneTrans.id === category.id
+    );
+    let newFilter = [...filteredCategories];
+    if (bool.length == 1) {
+      newFilter = newFilter.filter((item) => item.id !== category.id);
+    } else {
+      newFilter.push(category);
+    }
+    setFilteredCategories(newFilter);
   };
 
   const handleExpense = () => {
@@ -158,7 +170,7 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-  // console.log(search);
+
   return (
     <div>
       {showAddCategory && (
@@ -175,6 +187,8 @@ const Home = () => {
         className={` min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
       >
         <Navbar
+          onCloseModal={handleAdd}
+          categories={mycategories}
           dashboardStyle={"text-[#0F172A]"}
           recordsStyle={"font-semibold text-base text-[#0F172A]"}
         />
@@ -239,10 +253,7 @@ const Home = () => {
               <div className="flex flex-col gap-2">
                 {mycategories.map((category1, index) => {
                   return (
-                    <div
-                      key={index}
-                      onClick={() => handleCategory(category1.id)}
-                    >
+                    <div key={index} onClick={() => handleCategory(category1)}>
                       <MyCategories categoryName={category1.name} />
                     </div>
                   );
@@ -281,6 +292,7 @@ const Home = () => {
                 filter={filterTransactions}
                 userid={userId}
                 search={search}
+                categories={filteredCategories}
               />
             )}
             {condition === "DESC" && (

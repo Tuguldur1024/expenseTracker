@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 const Navbar = (props) => {
   const router = useRouter();
-  const { onCloseModal, dashboardStyle, recordsStyle } = props;
+  const { onCloseModal, dashboardStyle, recordsStyle, imgurl } = props;
 
   const goDashboard = () => {
     router.push("/dashboard");

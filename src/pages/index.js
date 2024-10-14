@@ -38,15 +38,12 @@ const records = [
 ];
 const today = new Date();
 
-let userId = 0;
-
-const categoryIconMap = {
-  food: <FoodExpense />,
-};
 const Home = () => {
-  if (typeof window !== "undefined") {
-    userId = localStorage.getItem("userid");
-  }
+  const [userId, setUserId] = useState(0);
+  useEffect(() => {
+    const savedId = window.localStorage.getItem("userid");
+    setUserId(savedId ? savedId : 0);
+  }, []);
   let transaction_color = "#F54949";
   let icon = <FoodExpense />;
   let plusMinusSign = "+";
@@ -69,12 +66,15 @@ const Home = () => {
     setSearch(searchValue);
 
     axios
-      .post("http://localhost:8000/transaction/byuserid", {
-        user_id: userId,
-        filter: filterTransactions,
-        search: searchValue,
-        categories: filteredCategories,
-      })
+      .post(
+        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
+        {
+          user_id: userId,
+          filter: filterTransactions,
+          search: searchValue,
+          categories: filteredCategories,
+        }
+      )
       .then(function (response) {
         setMyTransactions(response.data.transactions);
       })
@@ -84,6 +84,8 @@ const Home = () => {
 
     setSearch(event.target.value);
   };
+
+  console.log(search);
 
   const lastestNewest = () => {
     if (condition === "DESC") {

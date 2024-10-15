@@ -18,8 +18,6 @@ const Dashboard = () => {
   let icon = <RentIcon />;
   let plusMinusSign = "+";
 
-  const [income, setIncome] = useState(0);
-  const [expense, setExpense] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [mycategories, setMyCategories] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
@@ -34,55 +32,25 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    axios
-      .get("https://firstbackendexpensetracker.onrender.com/category")
-      .then(function (response) {
-        setMyCategories(response.data.categories);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    axios
-      .post(
-        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
-        { user_id: userid }
-      )
-      .then(function (response) {
-        const lastRecords = response.data.transactions?.slice(0, 5);
+    const fetchData = async () => {
+      try {
+        const responseCategory = await axios.get(
+          "https://firstbackendexpensetracker.onrender.com/category"
+        );
+        const responseTransaction = await axios.post(
+          "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
+          { user_id: userid }
+        );
+        const lastRecords = responseTransaction.data.transactions?.slice(0, 5);
         setTransactions(lastRecords);
-      })
-      .catch(function (error) {
+        setMyCategories(responseCategory.data.categories);
+      } catch (error) {
         console.log(error);
-      });
-    axios
-      .post(
-        "https://firstbackendexpensetracker.onrender.com/transaction/getIncome",
-        {
-          userid: userid,
-        }
-      )
-      .then(function (response) {
-        console.log(response.data.totalIncome[0]?.sum);
-        setIncome(response.data.totalIncome[0]?.sum);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    axios
-      .post(
-        "https://firstbackendexpensetracker.onrender.com/transaction/getExpense",
-        {
-          userid: userid,
-        }
-      )
-      .then(function (response) {
-        console.log(response.data.expense[0]?.sum);
-        setExpense(response.data.expense[0]?.sum);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      }
+    };
+    fetchData();
   }, [userid]);
+
   const handleAdd = () => {
     setShowAdd(!showAdd);
   };
@@ -94,37 +62,39 @@ const Dashboard = () => {
           <AddRecord onCloseModal={handleAdd} categories={mycategories} />
         </div>
       )}
-      <div className="bg-[#F3F4F6] flex flex-col gap-8 items-center min-h-screen">
+      <div className="bg-[#F3F4F6] flex flex-col gap-8 items-center min-h-screen  mx-auto">
         <Navbar
           onCloseModal={handleAdd}
           categories={mycategories}
           dashboardStyle={`font-semibold text-base text-[#0F172A]`}
           recordsStyle={`text-[#0F172A]`}
         />
-        <div className="flex flex-col gap-6 w-full px-[120px]">
+        <div className="flex flex-col gap-6 w-full px-[120px] max-w-screen-2xl">
           <div className="flex gap-6">
             <div className="w-full rounded-[18px] bg-[#0166FF]">
               <img className="w-full h-full" src="/images/Card.png" />
             </div>
             <Income
+              userid={userid}
+              url="https://firstbackendexpensetracker.onrender.com/transaction/getIncome"
               color={"#84CC16"}
               title={"Your Income"}
-              money={`${income}₮`}
               text={"Your Income Amount"}
               description={"0% from last month"}
               icon={<IncomeLogo />}
             />
             <Income
+              userid={userid}
+              url="https://firstbackendexpensetracker.onrender.com/transaction/getExpense"
               color={"#0166FF"}
               title={"Your Expense"}
-              money={`-${expense}₮`}
               text={"Your Expense Amount"}
               description={"0% from last month"}
               icon={<ExpenseLogo />}
             />
           </div>
         </div>
-        <div className="px-[120px] w-full flex flex-col gap-4">
+        <div className="px-[120px] w-full flex flex-col gap-4 max-w-screen-2xl">
           <div className="w-full">
             <p className="font-semibold text-base py-4 border-b border-#E2E8F0">
               Last Records

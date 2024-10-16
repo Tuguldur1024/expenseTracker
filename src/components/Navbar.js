@@ -32,7 +32,14 @@ const Navbar = (props) => {
           >
             + Record
           </button>
-          <div className="rounded-full w-10 h-10 bg-[url('/images/Profile.jpeg')]"></div>
+          <div
+            style={{
+              backgroundImage: `url(${imgurl})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+            className={`rounded-full w-10 h-10`}
+          ></div>
         </div>
       </div>
     </div>

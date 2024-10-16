@@ -18,15 +18,17 @@ const SignIn = () => {
 
   const Login = async () => {
     await axios
-      .post("https://firstbackendexpensetracker.onrender.com/user/signIn", {
+      .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signIn`, {
         email: email,
         password: password,
       })
       .then(function (response) {
         localStorage.setItem("userid", response.data.user[0].id);
+        localStorage.setItem("image", response.data.user[0].avatar_img);
         router.push("/dashboard");
       })
       .catch(function (error) {
+        console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
         console.log(error);
       })
       .finally(function () {});

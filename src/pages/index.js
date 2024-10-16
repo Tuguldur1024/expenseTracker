@@ -11,8 +11,8 @@ import FoodExpense from "../../public/icons/FoodExpenseIcon";
 import AddRecord from "@/components/AddRecord";
 import axios from "axios";
 import moment from "moment";
-import Router, { useRouter } from "next/router";
-
+import { useRouter } from "next/router";
+import IsDelete from "@/components/IsDelete";
 import AddCategory from "@/components/AddCategory";
 
 const records = [
@@ -42,13 +42,17 @@ const today = new Date();
 const Home = () => {
   const router = useRouter();
   const [userId, setUserId] = useState(0);
+  const [image, setImage] = useState("");
   useEffect(() => {
+    const image = window.localStorage.getItem("image");
     const savedId = window.localStorage.getItem("userid");
     if (!savedId) {
       router.push("/signIn");
     }
+    setImage(image);
     setUserId(savedId);
   }, []);
+
   let transaction_color = "#F54949";
   let icon = <FoodExpense />;
   let plusMinusSign = "+";
@@ -71,23 +75,18 @@ const Home = () => {
     setSearch(searchValue);
 
     axios
-      .post(
-        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
-        {
-          user_id: userId,
-          filter: filterTransactions,
-          search: searchValue,
-          categories: filteredCategories,
-        }
-      )
+      .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/byuserid`, {
+        user_id: userId,
+        filter: filterTransactions,
+        search: searchValue,
+        categories: filteredCategories,
+      })
       .then(function (response) {
         setMyTransactions(response.data.transactions);
       })
       .catch(function (error) {
         console.log(error);
       });
-
-    setSearch(event.target.value);
   };
 
   const lastestNewest = () => {
@@ -100,7 +99,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("https://firstbackendexpensetracker.onrender.com/category")
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/category`)
       .then(function (response) {
         setFilteredCategories(response.data.categories);
       })
@@ -111,7 +110,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("https://firstbackendexpensetracker.onrender.com/category")
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/category`)
       .then(function (response) {
         setMyCategories(response.data.categories);
       })
@@ -120,15 +119,12 @@ const Home = () => {
       });
 
     axios
-      .post(
-        "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
-        {
-          user_id: userId,
-          filter: filterTransactions,
-          search: search,
-          categories: filteredCategories,
-        }
-      )
+      .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/byuserid`, {
+        user_id: userId,
+        filter: filterTransactions,
+        search: search,
+        categories: filteredCategories,
+      })
       .then(function (response) {
         console.log(response);
         setMyTransactions(response.data.transactions);
@@ -179,9 +175,21 @@ const Home = () => {
   const addCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
+  const [deleteId, setDeleteId] = useState(0);
+  const [showDelete, setShowDelete] = useState(false);
+  const deleteModal = (id) => {
+    setShowDelete(!showDelete);
+    setDeleteId(id);
+  };
+  console.log(deleteId);
 
   return (
     <div>
+      {showDelete && (
+        <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
+          <IsDelete deleteModal={deleteModal} id={deleteId} />
+        </div>
+      )}
       {showAddCategory && (
         <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
           <AddCategory onCloseModal={addCategory} categories={mycategories} />
@@ -193,13 +201,14 @@ const Home = () => {
         </div>
       )}
       <div
-        className={` min-h-screen min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative`}
+        className={` min-h-screen min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative pb-6`}
       >
         <Navbar
           onCloseModal={handleAdd}
           categories={mycategories}
           dashboardStyle={"text-[#0F172A]"}
           recordsStyle={"font-semibold text-base text-[#0F172A]"}
+          imgurl={image}
         />
 
         <div className="flex gap-6">
@@ -327,11 +336,13 @@ const Home = () => {
                         color={transaction_color}
                         money={plusMinusSign + " " + String(recordToday.amount)}
                         iconColor={transaction_color}
+                        deleteModal={() => deleteModal(recordToday.id)}
+                        id={recordToday.id}
                       />
                     );
                   })}
                 </div>
-                <p className="font-semibold text-base"> Yesterday </p>
+                <p className="font-semibold text-base"> Before </p>
                 <div className="flex flex-col gap-3">
                   {transactionOfBefore.map((recordToday, index) => {
                     if (recordToday.transaction_type === "INC") {
@@ -345,6 +356,7 @@ const Home = () => {
                     }
                     return (
                       <OneRecord
+                        id={recordToday.id}
                         key={index}
                         text={recordToday.name}
                         image={icon}
@@ -352,6 +364,7 @@ const Home = () => {
                         color={transaction_color}
                         money={plusMinusSign + " " + String(recordToday.amount)}
                         iconColor={transaction_color}
+                        deleteModal={() => deleteModal(recordToday.id)}
                       />
                     );
                   })}

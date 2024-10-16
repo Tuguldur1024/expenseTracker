@@ -1,6 +1,7 @@
-const OneRecord = (props) => {
-  const { text, image, time, color, money, iconColor } = props;
+import { MdDeleteForever } from "react-icons/md";
 
+const OneRecord = (props) => {
+  const { id, text, image, time, color, money, iconColor, deleteModal } = props;
   return (
     <div className="w-full px-6 py-3 border bg-white border-[#E5E7EB] items-center justify-between flex rounded-xl">
       <div className="flex gap-4">
@@ -18,12 +19,15 @@ const OneRecord = (props) => {
           <p className="font-normal text-xs text-[#6B7280]"> {time} </p>
         </div>
       </div>
-      <p
-        className={`font-semibold text-base text-[${color}]`}
-        style={{ text: color }}
-      >
-        {money}
-      </p>
+      <div className="flex gap-4 justify-center items-center">
+        <p
+          className={`font-semibold text-base text-[${color}]`}
+          style={{ text: color }}
+        >
+          {money}
+        </p>
+        <MdDeleteForever size={16} onClick={deleteModal} />
+      </div>
     </div>
   );
 };

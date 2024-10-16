@@ -21,24 +21,27 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [mycategories, setMyCategories] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
+  const [image, setImage] = useState("");
 
   const [userid, setUserId] = useState(0);
   useEffect(() => {
     const savedid = window.localStorage.getItem("userid");
+    const image = window.localStorage.getItem("image");
     if (!savedid) {
       router.push("/signIn");
     }
     setUserId(savedid);
+    setImage(image);
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const responseCategory = await axios.get(
-          "https://firstbackendexpensetracker.onrender.com/category"
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/category`
         );
         const responseTransaction = await axios.post(
-          "https://firstbackendexpensetracker.onrender.com/transaction/byuserid",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/byuserid`,
           { user_id: userid }
         );
         const lastRecords = responseTransaction.data.transactions?.slice(0, 5);
@@ -68,6 +71,7 @@ const Dashboard = () => {
           categories={mycategories}
           dashboardStyle={`font-semibold text-base text-[#0F172A]`}
           recordsStyle={`text-[#0F172A]`}
+          imgurl={image}
         />
         <div className="flex flex-col gap-6 w-full px-[120px] max-w-screen-2xl">
           <div className="flex gap-6">
@@ -76,7 +80,7 @@ const Dashboard = () => {
             </div>
             <Income
               userid={userid}
-              url="https://firstbackendexpensetracker.onrender.com/transaction/getIncome"
+              url={`${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/getIncome`}
               color={"#84CC16"}
               title={"Your Income"}
               text={"Your Income Amount"}
@@ -85,7 +89,7 @@ const Dashboard = () => {
             />
             <Income
               userid={userid}
-              url="https://firstbackendexpensetracker.onrender.com/transaction/getExpense"
+              url={`${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/getExpense`}
               color={"#0166FF"}
               title={"Your Expense"}
               text={"Your Expense Amount"}

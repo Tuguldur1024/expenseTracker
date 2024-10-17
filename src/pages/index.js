@@ -182,6 +182,7 @@ const Home = () => {
     setDeleteId(id);
   };
   console.log(deleteId);
+  console.log(transactionOfBefore);
 
   return (
     <div>

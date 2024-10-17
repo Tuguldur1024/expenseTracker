@@ -11,6 +11,7 @@ import moment from "moment";
 import Image from "next/image";
 import AddRecord from "@/components/AddRecord";
 import Router, { useRouter } from "next/router";
+import IsDelete from "@/components/IsDelete";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -33,6 +34,8 @@ const Dashboard = () => {
     setUserId(savedid);
     setImage(image);
   }, []);
+
+  console.log(image);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,9 +60,20 @@ const Dashboard = () => {
   const handleAdd = () => {
     setShowAdd(!showAdd);
   };
+  const [deleteId, setDeleteId] = useState(0);
+  const [showDelete, setShowDelete] = useState(false);
+  const deleteModal = (id) => {
+    setShowDelete(!showDelete);
+    setDeleteId(id);
+  };
 
   return (
     <div>
+      {showDelete && (
+        <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
+          <IsDelete deleteModal={deleteModal} id={deleteId} />
+        </div>
+      )}
       {showAdd && (
         <div className="z-30 fixed top-0 left-0 right-0 bottom-0 bg-gray-400 flex justify-center items-center">
           <AddRecord onCloseModal={handleAdd} categories={mycategories} />
@@ -123,6 +137,8 @@ const Dashboard = () => {
                 color={transaction_color}
                 money={plusMinusSign + " " + String(transaction.amount)}
                 iconColor={transaction_color}
+                deleteModal={() => deleteModal(transaction.id)}
+                id={transaction.id}
               />
             );
           })}

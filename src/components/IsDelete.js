@@ -9,7 +9,7 @@ const IsDelete = (props) => {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction`,
         {
-          id: id,
+          data: { id: id },
         }
       );
       console.log(response);

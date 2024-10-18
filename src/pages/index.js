@@ -126,7 +126,6 @@ const Home = () => {
         categories: filteredCategories,
       })
       .then(function (response) {
-        console.log(response);
         setMyTransactions(response.data.transactions);
       })
       .catch(function (error) {
@@ -181,8 +180,6 @@ const Home = () => {
     setShowDelete(!showDelete);
     setDeleteId(id);
   };
-  console.log(deleteId);
-  console.log(transactionOfBefore);
 
   return (
     <div>

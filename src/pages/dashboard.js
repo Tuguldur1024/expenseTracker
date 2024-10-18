@@ -12,6 +12,7 @@ import Image from "next/image";
 import AddRecord from "@/components/AddRecord";
 import Router, { useRouter } from "next/router";
 import IsDelete from "@/components/IsDelete";
+import { ExpensePie, IncomePie } from "@/components/PieChart";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -34,8 +35,6 @@ const Dashboard = () => {
     setUserId(savedid);
     setImage(image);
   }, []);
-
-  console.log(image);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,7 +78,7 @@ const Dashboard = () => {
           <AddRecord onCloseModal={handleAdd} categories={mycategories} />
         </div>
       )}
-      <div className="bg-[#F3F4F6] flex flex-col gap-8 items-center min-h-screen  mx-auto">
+      <div className="bg-[#F3F4F6] flex flex-col gap-8 items-center min-h-screen  mx-auto pb-4">
         <Navbar
           onCloseModal={handleAdd}
           categories={mycategories}
@@ -111,6 +110,10 @@ const Dashboard = () => {
               icon={<ExpenseLogo />}
             />
           </div>
+        </div>
+        <div className="px-[120px] w-full flex gap-4 max-w-screen-2xl">
+          <IncomePie />
+          <ExpensePie />
         </div>
         <div className="px-[120px] w-full flex flex-col gap-4 max-w-screen-2xl">
           <div className="w-full">

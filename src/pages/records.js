@@ -1,9 +1,10 @@
 import IsDelete from "@/components/IsDelete";
-import { ExpensePie } from "@/components/PieChart";
+import { ExpensePie, IncomePie } from "@/components/PieChart";
 
 const records = () => {
   return (
-    <div>
+    <div className="flex gap-4">
+      <IncomePie />
       <ExpensePie />
     </div>
   );

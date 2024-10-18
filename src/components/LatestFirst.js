@@ -8,13 +8,17 @@ import moment from "moment";
 const LatestFirst = ({ userid, filter, search, categories }) => {
   const [ascendingTransactions, setAscendingTransactions] = useState([]);
   useEffect(() => {
+    console.log(categories);
     axios
-      .post(`${process.env.BACKEND_URL}/transaction/getAscendingTransactions`, {
-        user_id: userid,
-        filter: filter,
-        search: search,
-        categories: categories,
-      })
+      .post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/getAscendingTransactions`,
+        {
+          user_id: userid,
+          filter: filter,
+          search: search,
+          categories: categories,
+        }
+      )
       .then(function (response) {
         console.log(response);
         setAscendingTransactions(response.data.transactions);
@@ -23,6 +27,7 @@ const LatestFirst = ({ userid, filter, search, categories }) => {
         console.log(error);
       });
   }, [search, filter, categories, userid]);
+  console.log(ascendingTransactions);
 
   let transaction_color = "";
   let icon = null;

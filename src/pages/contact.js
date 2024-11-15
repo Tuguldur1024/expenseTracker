@@ -34,7 +34,7 @@ const Contact = () => {
       <div className="bg-[#0166FF] text-white py-20">
         <div className="text-center">
           <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="mt-4 text-lg">We'd love to hear from you!</p>
+          <p className="mt-4 text-lg">We would love to hear from you!</p>
         </div>
       </div>
 

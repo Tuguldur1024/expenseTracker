@@ -93,15 +93,15 @@ const Home = () => {
         <div className="flex flex-col md:flex-row gap-8 mt-8 max-w-4xl">
           <div className="w-full md:w-[45%] bg-white p-6 rounded-lg shadow-md">
             <p className="text-lg italic text-gray-700">
-              "This app has transformed how I manage my money. I can see all my
-              expenses in one place!"
+              This app has transformed how I manage my money. I can see all my
+              expenses in one place!
             </p>
             <p className="text-right mt-4 font-bold">– Alex J.</p>
           </div>
           <div className="w-full md:w-[45%] bg-white p-6 rounded-lg shadow-md">
             <p className="text-lg italic text-gray-700">
-              "Simple and effective! It's now so easy to keep track of my
-              finances."
+              Simple and effective! It is now so easy to keep track of my
+              finances.
             </p>
             <p className="text-right mt-4 font-bold">– Sarah M.</p>
           </div>

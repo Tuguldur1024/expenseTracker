@@ -77,10 +77,10 @@ const TermsOfService = () => {
             6. Limitations of Liability
           </h2>
           <p className="mb-4">
-            Our platform is provided "as is" and we do not guarantee the
-            accuracy, completeness, or reliability of any information or
-            services provided. We are not liable for any loss, damage, or
-            inconvenience arising from your use of our platform.
+            Our platform is provided as is and we do not guarantee the accuracy,
+            completeness, or reliability of any information or services
+            provided. We are not liable for any loss, damage, or inconvenience
+            arising from your use of our platform.
           </p>
 
           <h2 className="text-2xl font-semibold text-[#0166FF] mt-10">
@@ -88,7 +88,7 @@ const TermsOfService = () => {
           </h2>
           <p className="mb-4">
             We may modify or update these Terms of Service from time to time.
-            Any changes will be posted on this page, and the "Last updated" date
+            Any changes will be posted on this page, and the Last updated date
             will be revised accordingly. We encourage you to review these Terms
             periodically.
           </p>

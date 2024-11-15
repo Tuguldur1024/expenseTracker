@@ -81,7 +81,7 @@ const PrivacyPolicy = () => {
           </h2>
           <p className="mb-4">
             We may update our Privacy Policy from time to time. Any changes will
-            be posted on this page, and the "Last updated" date will be revised
+            be posted on this page, and the Last updated date will be revised
             accordingly.
           </p>
 

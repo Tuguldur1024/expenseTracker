@@ -47,7 +47,7 @@ const Home = () => {
     const image = window.localStorage.getItem("image");
     const savedId = window.localStorage.getItem("userid");
     if (!savedId) {
-      router.push("/signIn");
+      router.push("/home");
     }
     setImage(image);
     setUserId(savedId);
@@ -64,7 +64,6 @@ const Home = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState("All");
   const [myRecords, setRecords] = useState(records);
-
   const [filteredCategories, setFilteredCategories] = useState([]);
 
   const [condition, setCondition] = useState("DESC");
@@ -181,7 +180,6 @@ const Home = () => {
     setShowDelete(!showDelete);
     setDeleteId(id);
   };
-  console.log(deleteId);
 
   return (
     <div>
@@ -201,7 +199,7 @@ const Home = () => {
         </div>
       )}
       <div
-        className={` min-h-screen min-w- bg-[#F3F4F6] flex flex-col gap-8 items-center relative pb-6`}
+        className={` min-h-screen bg-[#F3F4F6] flex flex-col gap-8 items-center relative pb-6`}
       >
         <Navbar
           onCloseModal={handleAdd}
